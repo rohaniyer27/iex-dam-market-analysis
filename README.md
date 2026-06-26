@@ -20,7 +20,14 @@ to explore price volatility, demand-supply dynamics, and operational trends.
 - Jupyter Notebook — exploratory analysis
 
 ## Current Status
-Work in progress — weather API integration and expanded analysis coming.
+
+- Data cleaning and preprocessing completed
+- Exploratory analysis completed using Python
+- SQL analysis included
+- Tableau dashboard created
+- Baseline Linear Regression model added for MCP forecasting
+- Weather API integration planned
+- ARIMA / advanced forecasting planned
 
 ## Dashboard Preview
 <img width="1606" height="1216" alt="image" src="https://github.com/user-attachments/assets/08424593-322f-46cb-ad92-889338b3ccba" />
