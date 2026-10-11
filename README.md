@@ -26,8 +26,25 @@ to explore price volatility, demand-supply dynamics, and operational trends.
 - SQL analysis included
 - Tableau dashboard created
 - Baseline Linear Regression model added for MCP forecasting
+- Rolling-horizon battery optimisation prototype added
 - Weather API integration planned
 - ARIMA / advanced forecasting planned
 
 ## Dashboard Preview
 <img width="1606" height="1216" alt="image" src="https://github.com/user-attachments/assets/08424593-322f-46cb-ad92-889338b3ccba" />
+
+
+## Battery Optimisation Extension
+
+A deterministic rolling-horizon battery arbitrage prototype is available in
+[`battery-rolling-optimisation/`](battery-rolling-optimisation/).
+
+It uses the IEX DAM 15-minute price data already stored in this repository and
+compares 1-hour, 4-hour, 8-hour and full-day look-ahead horizons under explicit
+state-of-charge, power and efficiency constraints.
+
+The 8-hour rolling horizon achieved gross arbitrage revenue of approximately
+**Rs 73,656.55**, compared with **Rs 73,686.35** for the full-day
+perfect-foresight benchmark in this single-day experiment. The prototype is
+intentionally deterministic and is intended as a baseline before stochastic
+optimisation and learning-based extensions.
