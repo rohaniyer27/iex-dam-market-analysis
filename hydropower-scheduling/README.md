@@ -1,41 +1,74 @@
-# Hydropower scheduling mini-lab
+# HydroOpt: Hydropower Scheduling and Decision Analysis
 
-A **synthetic educational optimisation project**, developed as technical preparation for research on long-term hydropower scheduling. Kept separate from the Indian Electricity Exchange analysis in the parent repository.
+HydroOpt is a Python project for studying reservoir scheduling decisions under inflow uncertainty. It compares deterministic, stochastic and risk-aware optimisation approaches, explores how reservoir head changes generation, and evaluates the effect of water-value approximations on scheduling decisions.
 
-## What it demonstrates
+The models use a seven-day, single-reservoir test system with generated data. The focus is on transparent formulations, reproducible experiments and decisions under imperfect forecasts.
 
-- A seven-day **deterministic** single-reservoir linear programme with storage balance, discharge/spill, physical limits, and fixed terminal water value (`reservoir_lab.py`).
-- A small **two-stage stochastic** linear programme with dry/normal/wet inflow scenarios and probabilities 0.25/0.50/0.25 (`stochastic_reservoir.py`). Day-1 actions are non-anticipative; the remaining days can respond to the revealed scenario.
-- Assertions for water balance and common first-day decisions.
+## Project scope
 
-## Run
+| Module | Description |
+| --- | --- |
+| `reservoir_lab.py` | Deterministic linear programme for turbine release, spillage, reservoir storage and terminal water value |
+| `stochastic_reservoir.py` | Two-stage stochastic linear programme with shared first-day decisions across dry, normal and wet inflow scenarios |
+| `risk_cvar.py` | Two-stage risk-aware variant using Conditional Value at Risk (CVaR) of operating loss |
+| `advanced_lab.py` | Rolling-horizon re-optimisation, nonlinear head-dependent generation example and concave piecewise-linear continuation-value approximation |
+| `benchmark.py` | Seeded out-of-sample comparison using first-stage decision regret |
+| `BENCHMARK.md` | Experimental design, summary metrics and sensitivity checks |
+| `ADVANCED.md` | Detailed assumptions for the advanced experiments |
 
-```bash
-python -m pip install -r requirements.txt
-python hydropower-scheduling/reservoir_lab.py
-python hydropower-scheduling/stochastic_reservoir.py
+## Formulation
+
+Reservoir storage follows the daily water balance:
+
+```text
+storage[t] = storage[t-1] + inflow[t] - discharge[t] - spillage[t]
 ```
 
-From the repository root. Or enter the `hydropower-scheduling` directory and omit its prefix.
+Storage and turbine-release limits constrain the feasible schedule. The linear models maximise electricity revenue plus a terminal value for water remaining at the end of the horizon. The two-stage formulations enforce non-anticipativity: first-day decisions are the same across all scenarios, while later decisions can respond after the scenario is revealed.
 
-## Modelling assumptions and limits
+The nonlinear example makes release-to-generation conversion depend on beginning-of-day reservoir storage. The continuation-value experiment fits a concave piecewise-linear curve to value samples from small deterministic optimisation problems.
 
-All inputs are **illustrative**, with arbitrary water and monetary units. Release-to-generation conversion is 1 MWh per water unit, independent of hydraulic head. The horizon is seven days, and water can be spilled without penalty. The terminal value is a **fixed linear coefficient**, not a learned water-value function. The stochastic model assumes day-1 inflow is known and the whole future inflow regime is revealed after day 1. The individual deterministic scenarios are **perfect-information solves**, not stochastic optimisation.
+## Setup and execution
 
-This is **not** a calibrated Norwegian hydropower system; it does **not** implement nonlinear head-dependent production, multireservoir routing, SDDP, reinforcement learning, or machine-learned continuation values. Do not interpret its synthetic scenario differences as evidence of economic improvements over a real baseline.
+Requires Python 3.10+.
 
-## Mathematical formulation
+From the **repository root**:
 
-For each day, end-of-day storage satisfies:
+```bash
+python -m pip install -r hydropower-scheduling/requirements.txt
 
-`S[t] = S[t-1] + inflow[t] - discharge[t] - spill[t]`
+python hydropower-scheduling/reservoir_lab.py
+python hydropower-scheduling/stochastic_reservoir.py
+python hydropower-scheduling/risk_cvar.py
+python hydropower-scheduling/advanced_lab.py
+python hydropower-scheduling/benchmark.py
+```
 
-with storage and discharge bounds. Maximise generation revenue plus `terminal_value * final_storage`; the stochastic model maximises the probability-weighted objective and shares first-day decisions across scenarios.
+The benchmark writes `hydropower-scheduling/benchmark_results.csv` when executed.
 
-## Validation
+## Benchmark design and findings
 
-Both scripts check equality constraints numerically after solving. The stochastic script also verifies the non-anticipativity equalities. More realistic extensions would compare expected-policy performance out of sample, include nonlinear generation, and test alternative water-value approximations.
+The out-of-sample benchmark tests three first-stage policies across 35 seeded synthetic operating contexts and five unseen inflow outcomes per context (175 outcomes per policy). Each policy's first release/spillage decision is fixed, after which the realised scenario is evaluated with optimal remaining-horizon recourse. Decision regret is computed relative to a perfect-information oracle.
 
-## Attribution
+| First-stage policy | Mean regret | 90th-percentile regret | Maximum regret |
+| --- | ---: | ---: | ---: |
+| Expected-inflow LP | 43.543 | 169.752 | 643.047 |
+| Scenario LP | 35.020 | 154.990 | 412.959 |
+| CVaR LP | 36.192 | 117.647 | 630.094 |
 
-Independent educational example implemented with NumPy and SciPy's open-source HiGHS LP backend.
+Values are in the model's arbitrary objective units; lower regret is better. The scenario LP reduced mean regret by 19.6% **in this seeded test**, while CVaR produced the lowest 90th-percentile regret. Additional random-seed checks show that rankings vary across samples. Full methodology and sensitivity results are documented in [BENCHMARK.md](BENCHMARK.md).
+
+## Model assumptions
+
+- Single reservoir, seven-day horizon and generated price/inflow data; no claim of calibration to a particular hydropower plant.
+- The LP models use constant water-to-energy conversion and a fixed linear terminal water value.
+- The two-stage scenario model assumes the future inflow regime is revealed after the first day; this is simpler than realistic sequential forecasting.
+- The head-dependent example uses a synthetic production function and a local nonlinear solver, without a global-optimality certificate.
+- The fitted concave continuation-value curve is an approximation, not a neural model or a certified SDDP cut.
+- The regret benchmark evaluates the **first-stage decision**, not a full sequential policy rollout.
+
+These boundaries help distinguish the formulations and keep comparisons interpretable.
+
+## Next experiments
+
+Extend evaluation to sequential policy rollouts and multi-seed confidence intervals; compare learned terminal-value policies at matched computing budgets; add multi-reservoir routing and calibrated head-dependent production data.
