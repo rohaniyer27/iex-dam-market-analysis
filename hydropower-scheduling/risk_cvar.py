@@ -1,5 +1,5 @@
 """Risk-aware two-stage stochastic reservoir LP using CVaR of negative total value.
-All scenarios synthetic. CVaR penalty can be zero or positive; no performance guarantees.
+All scenarios synthetic. Objective maximizes expected operating value minus a\nweighted CVaR of loss (negative operating value). The risk-adjusted utility\nincludes the tail-risk term and must not be compared numerically with ordinary\nexpected operating value. A weight change need not change the optimal policy.\nNo performance guarantees.
 """
 import numpy as np
 from scipy.optimize import linprog
@@ -33,9 +33,13 @@ def solve(risk_weight=0.35, alpha=.9):
     for k in range(3):
         o=k*3*T
         vals.append(float(PRICES@res.x[o:o+T]+TERMINAL_VALUE*res.x[o+3*T-1]))
-    return {"expected_value":float(np.dot(probs,vals)),"risk_adjusted_objective":-float(res.fun),
+    return {"expected_value":float(np.dot(probs,vals)),"risk_adjusted_utility":-float(res.fun),
             "scenario_values":vals,"day_one_release":float(res.x[0])}
 
 if __name__=="__main__":
-    for weight in (0.,.35):
-        print("CVaR weight",weight,solve(weight))
+    for weight in (0.,.6):
+        r=solve(weight)
+        print("CVaR weight",weight,
+              "expected operating value",round(r["expected_value"],2),
+              "risk-adjusted utility (different scale)",round(r["risk_adjusted_utility"],2),
+              "day-one release",round(r["day_one_release"],2))
