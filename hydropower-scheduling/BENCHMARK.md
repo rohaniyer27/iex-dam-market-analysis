@@ -26,3 +26,14 @@ Scenario LP shows a **19.6% lower mean regret in this particular synthetic bench
 The optimisation LP constraints are checked numerically and oracle dominance is checked for every scored policy/outcome. The risk objective operates on negative total operating value. Scenarios are synthetic, single-reservoir and linearly convert water to electricity. The model assumes the **entire** remaining hydrological regime becomes known immediately after day 1; that is a simplifying two-stage information structure, not a realistic daily-updated forecast process. CVaR uses the planning distribution, not the shifted evaluation distribution.
 
 No learning model was trained for this benchmark; the concave value approximation remains a *separate*, preliminary experiment in `advanced_lab.py`. More rigorous work should add multiple independent seeds, confidence intervals clustered by context, full policy rollouts, physically calibrated heads, and matched-compute model comparisons. 
+
+
+## Additional seed sensitivity check (15 contexts × 5 outcomes per seed)
+
+| Seed | Expected-inflow mean regret | Scenario LP | CVaR LP |
+| --- | ---: | ---: | ---: |
+| 31 | 35.183 | 36.456 | 37.550 |
+| 42 | 20.748 | 20.748 | 20.748 |
+| 99 | 45.466 | 50.401 | 59.604 |
+
+**Interpretation:** Relative performance changes across synthetic draws. The main-seed 19.6% improvement is **not stable evidence of a general gain**. These are quick robustness spot checks, not confidence intervals or formal significance analysis. They reinforce the research motivation: decision-level evaluation matters, and favorable single-seed numbers should not be overgeneralized.
