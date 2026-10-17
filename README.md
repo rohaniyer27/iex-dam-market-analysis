@@ -48,3 +48,7 @@ The 8-hour rolling horizon achieved gross arbitrage revenue of approximately
 perfect-foresight benchmark in this single-day experiment. The prototype is
 intentionally deterministic and is intended as a baseline before stochastic
 optimisation and learning-based extensions.
+
+## Hydropower scheduling and decision analysis
+
+[HydroOpt](hydropower-scheduling/) studies single-reservoir scheduling with deterministic and two-stage stochastic LPs, CVaR risk preferences, head-dependent production experiments, and out-of-sample first-stage decision-regret evaluation. Its synthetic benchmarks and modelling assumptions are documented within the project folder.
