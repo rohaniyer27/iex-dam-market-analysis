@@ -1,0 +1,2 @@
+market_date,interval_count,mean_mcp_rs_mwh,min_mcp_rs_mwh,max_mcp_rs_mwh,price_range_rs_mwh,cleared_mwh,volume_weighted_mcp_rs_mwh
+2026-05-24,96,5895.306666666666,1380.24,10000.0,8619.76,142283.7525,4052.779542191579

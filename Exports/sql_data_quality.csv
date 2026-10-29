@@ -1,0 +1,2 @@
+market_date,interval_count,duplicate_timestamps,missing_numeric_rows,negative_quantity_rows,irregular_steps,first_timestamp,last_timestamp
+2026-05-24,96,0,0,0,0,2026-05-24 00:00:00,2026-05-24 23:45:00

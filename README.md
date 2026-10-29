@@ -23,9 +23,9 @@ to explore price volatility, demand-supply dynamics, and operational trends.
 
 - Data cleaning and preprocessing completed
 - Exploratory analysis completed using Python
-- SQL analysis included
+- Reproducible SQLite analysis added: [queries, loader and results](SQL/README.md)
 - Tableau dashboard created
-- Baseline Linear Regression model added for MCP forecasting
+- Forecasting notebook scaffold present; trained baseline and evaluation are not yet included in that notebook
 - Rolling-horizon battery optimisation prototype added
 - Weather API integration planned
 - ARIMA / advanced forecasting planned
